@@ -20,13 +20,13 @@ func SignUp(ctx *gin.Context){
 	var user models.User
 
 	if err := ctx.BindJSON(&user); err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	// validate the struct
 	if err := validate.Struct(user); err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -83,14 +83,14 @@ func Login(ctx *gin.Context){
 	var user models.User
 
 	if err := ctx.BindJSON(&user); err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	// Get the data of the user with the email provided
 	newUser, err := services.GetUserWithEmail(user.Email)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Incorrect email or password"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Incorrect email or password"})
 		return
 	}
 
@@ -98,7 +98,7 @@ func Login(ctx *gin.Context){
 	// supplied by the user
 	passwordIsValid := helpers.VerifyPassword(newUser.Password, user.Password)
 	if !passwordIsValid {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Incorrect email or password"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Incorrect email or password"})
 		return
 	}
 
